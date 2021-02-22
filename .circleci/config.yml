@@ -103,8 +103,8 @@ workflows:
           context: test
       - test:
           requires:
-            build
+            - build
       - analyze:
           requires:
-            test                    
+            - test                    
 
