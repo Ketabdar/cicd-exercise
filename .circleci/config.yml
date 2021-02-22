@@ -36,7 +36,32 @@ jobs:
       - run:
           name: "echo an env var that is part of our project"
           command: |
-            echo $MY_ENV_VAR   
+            echo $MY_ENV_VAR 
+      - run: npm run lint
+
+  test:
+    docker:
+      - image: cimg/base:2020.01
+    steps:
+      - checkout
+      - run:
+          name: "echo an env var that is part of our project"
+          command: |
+            echo $MY_ENV_VAR
+      - run: npm i
+      - run: npm run test      
+
+  analyze:
+    docker:
+      - image: cimg/base:2020.01
+    steps:
+      - checkout
+      - run:
+          name: "echo an env var that is part of our project"
+          command: |
+            echo $MY_ENV_VAR 
+      - run: npm audit      
+
   my_job:
     docker:
       - image: circleci/node:13.8.0
@@ -70,10 +95,16 @@ workflows:
       - save_hello_world_output
       - print_output_file:
           requires:
-              - save_hello_world_output
+              - save_hello_world_output        
 
   test-env-vars:
     jobs:
       - build:
-          context: test          
+          context: test
+      - test:
+          requires:
+            build
+      - analyze:
+          requires:
+            test                    
 
